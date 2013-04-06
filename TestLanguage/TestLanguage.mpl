@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<language namespace="TestLanguage" uuid="55a52caa-918f-4a0a-b1f5-d4c8b8c8567f" doNotGenerateAdapters="true">
+<language namespace="TestLanguage" uuid="55a52caa-918f-4a0a-b1f5-d4c8b8c8567f">
   <models>
-    <modelRoot path="${language_descriptor}/languageModels" />
+    <modelRoot contentPath="${module}/languageModels" type="default">
+      <sourceRoot location="." />
+    </modelRoot>
   </models>
   <accessoryModels />
   <generators />
