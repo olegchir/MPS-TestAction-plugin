@@ -23,5 +23,15 @@ teamcity-info.xml
 *.hprof
 *.class
 lib/*
-source_gen
+
+source_gen/TestLanguage/*
+source_gen/TestLanguage/behavior/*
+source_gen/TestLanguage/constraints/*
+source_gen/TestLanguage/editor/*
+!source_gen/TestLanguage/plugin
+source_gen/TestLanguage/plugin/*
+!source_gen/TestLanguage/plugin/*.java
+source_gen/TestLanguage/structure/*
+source_gen/TestLanguage/typesystem/*
+
 source_gen.caches
