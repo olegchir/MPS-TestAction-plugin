@@ -21,6 +21,7 @@ public class ProjectHelper {
   public static final String ACTION_PROPERTY_MODELS = "models";
   public static final String ACTION_PROPERTY_MODULES = "modules";
 
+
   public static void collectActionData(final AnActionEvent event, final Map<String, Object> _params) {
     ModelAccess.instance().runReadAction(new Runnable() {
       public void run() {
@@ -38,20 +39,20 @@ public class ProjectHelper {
    * @return true
    */
   public static boolean collectActionDataImpl(final AnActionEvent event, final Map<String, Object> _params) {
-    MapSequence.fromMap(_params).put(ACTION_PROPERTY_PROJECT, event.getData(PlatformDataKeys.PROJECT));
-    if (MapSequence.fromMap(_params).get(ACTION_PROPERTY_PROJECT) == null) {
+    MapSequence.fromMap(_params).put(ProjectHelper.ACTION_PROPERTY_PROJECT, event.getData(PlatformDataKeys.PROJECT));
+    if (MapSequence.fromMap(_params).get(ProjectHelper.ACTION_PROPERTY_PROJECT) == null) {
       return false;
     }
-    MapSequence.fromMap(_params).put(ACTION_PROPERTY_FRAME, event.getData(MPSCommonDataKeys.FRAME));
-    if (MapSequence.fromMap(_params).get(ACTION_PROPERTY_FRAME) == null) {
+    MapSequence.fromMap(_params).put(ProjectHelper.ACTION_PROPERTY_FRAME, event.getData(MPSCommonDataKeys.FRAME));
+    if (MapSequence.fromMap(_params).get(ProjectHelper.ACTION_PROPERTY_FRAME) == null) {
       return false;
     }
-    MapSequence.fromMap(_params).put(ACTION_PROPERTY_CONTEXT, event.getData(MPSCommonDataKeys.OPERATION_CONTEXT));
-    if (MapSequence.fromMap(_params).get(ACTION_PROPERTY_CONTEXT) == null) {
+    MapSequence.fromMap(_params).put(ProjectHelper.ACTION_PROPERTY_CONTEXT, event.getData(MPSCommonDataKeys.OPERATION_CONTEXT));
+    if (MapSequence.fromMap(_params).get(ProjectHelper.ACTION_PROPERTY_CONTEXT) == null) {
       return false;
     }
-    MapSequence.fromMap(_params).put(ACTION_PROPERTY_MODELS, event.getData(MPSCommonDataKeys.MODELS));
-    MapSequence.fromMap(_params).put(ACTION_PROPERTY_MODULES, event.getData(MPSDataKeys.MODULES));
+    MapSequence.fromMap(_params).put(ProjectHelper.ACTION_PROPERTY_MODELS, event.getData(MPSCommonDataKeys.MODELS));
+    MapSequence.fromMap(_params).put(ProjectHelper.ACTION_PROPERTY_MODULES, event.getData(MPSDataKeys.MODULES));
     return true;
   }
 
@@ -66,4 +67,6 @@ public class ProjectHelper {
   public static MPSProject getCurrentProject(final AnActionEvent event) {
     return MPSCommonDataKeys.MPS_PROJECT.getData(event.getDataContext());
   }
+
+
 }
