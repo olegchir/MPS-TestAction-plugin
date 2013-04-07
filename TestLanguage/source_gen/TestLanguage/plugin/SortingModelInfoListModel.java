@@ -15,11 +15,16 @@ import java.util.Iterator;
  */
 public class SortingModelInfoListModel extends AbstractListModel {
   private static Comparator INTERNAL_COMPARATOR = new ModelInfoItemComparator();
-  /*package*/ TreeSet model;
+
+  private TreeSet model;
+
 
   public SortingModelInfoListModel() {
     model = new TreeSet(INTERNAL_COMPARATOR);
   }
+
+
+
 
   public int getSize() {
     //  ListModel methods 
@@ -75,4 +80,6 @@ public class SortingModelInfoListModel extends AbstractListModel {
     }
     return removed;
   }
+
+
 }
