@@ -28,6 +28,7 @@ public class SelectionGUIManager {
   public static final int INTENDED_SLEEP_AFTER_PROCESSING_INTERVAL = 1000;
   public static final String UNEXPECTED_ERROR_MESSAGE = "Unexpected error:";
 
+
   public static void showSelectionGUI(AnActionEvent event, HashSet<SModel> models) {
     final THashMap<String, Object> params = new THashMap<String, Object>();
     ProjectHelper.collectActionData(event, params);
@@ -41,15 +42,15 @@ public class SelectionGUIManager {
 
             // We passed ProgressMonitorAdapter through all this listeners,  
             // so it easy to track progress with start/advance/done 
-            monitor.start(PROGRESS_BAR_CAPTION, approvedModels.size());
+            monitor.start(SelectionGUIManager.PROGRESS_BAR_CAPTION, approvedModels.size());
             for (SModel model : SetSequence.fromSet(approvedModels)) {
-              String stepDescription = PROGRESS_BAR_STEP_REFIX + model.getModelName();
+              String stepDescription = SelectionGUIManager.PROGRESS_BAR_STEP_REFIX + model.getModelName().toString();
               monitor.step(stepDescription);
               TestClassGenerator.generateTestClass(event, model);
               try {
-                Thread.sleep(INTENDED_MODEL_PROCESSING_INTERVAL);
+                Thread.sleep(SelectionGUIManager.INTENDED_MODEL_PROCESSING_INTERVAL);
               } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, UNEXPECTED_ERROR_MESSAGE + e.toString());
+                JOptionPane.showMessageDialog(null, SelectionGUIManager.UNEXPECTED_ERROR_MESSAGE + e.toString());
                 monitor.cancel();
               }
               monitor.advance(1);
@@ -58,7 +59,7 @@ public class SelectionGUIManager {
             // Little pause just after finishing generation process 
             // Especially for the user to be in time to see a dialogue with 100% of the work performed 
             try {
-              Thread.sleep(INTENDED_SLEEP_AFTER_PROCESSING_INTERVAL);
+              Thread.sleep(SelectionGUIManager.INTENDED_SLEEP_AFTER_PROCESSING_INTERVAL);
             } catch (Exception e) {
             } finally {
               monitor.done();
@@ -68,4 +69,6 @@ public class SelectionGUIManager {
       }
     });
   }
+
+
 }
