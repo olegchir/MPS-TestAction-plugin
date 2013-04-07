@@ -29,6 +29,7 @@ public class ModelSelectionDialog {
   public static final int SELECT_MODELS_DIALOG_BUTTON_WIDTH = 50;
   public static final int SELECT_MODELS_DIALOG_BUTTON_HEIGHT = 50;
 
+
   /**
    * Show Model Selection Dialog
    * 
@@ -44,8 +45,8 @@ public class ModelSelectionDialog {
 
     // Create dialog 
     final JDialog dialog = new JDialog(mpsBaseFrame, Dialog.ModalityType.APPLICATION_MODAL);
-    dialog.setTitle(SELECT_MODELS_TITLE);
-    dialog.setSize(SELECT_MODELS_DIALOG_WIDTH, SELECT_MODELS_DIALOG_HEIGHT);
+    dialog.setTitle(ModelSelectionDialog.SELECT_MODELS_TITLE);
+    dialog.setSize(ModelSelectionDialog.SELECT_MODELS_DIALOG_WIDTH, ModelSelectionDialog.SELECT_MODELS_DIALOG_HEIGHT);
 
     // Create special sorting list model for JList, put models into it, and that assign it to a new JList 
     ModelInfoItem[] srcItems = ModelInfoItem.arrayFromSModels(models);
@@ -58,8 +59,8 @@ public class ModelSelectionDialog {
     dialog.add(jsp, BorderLayout.CENTER);
 
     // Create button, but it on the bottom of Dialog 
-    final JButton btn = new JButton(SELECT_MODELS_DIALOG_BUTTON_CAPTION);
-    btn.setPreferredSize(new Dimension(SELECT_MODELS_DIALOG_BUTTON_WIDTH, SELECT_MODELS_DIALOG_BUTTON_HEIGHT));
+    final JButton btn = new JButton(ModelSelectionDialog.SELECT_MODELS_DIALOG_BUTTON_CAPTION);
+    btn.setPreferredSize(new Dimension(ModelSelectionDialog.SELECT_MODELS_DIALOG_BUTTON_WIDTH, ModelSelectionDialog.SELECT_MODELS_DIALOG_BUTTON_HEIGHT));
     dialog.add(btn, BorderLayout.SOUTH);
 
     // Add action for this button - check if selection is not empty, and pass this selection to the class generator 
@@ -78,4 +79,6 @@ public class ModelSelectionDialog {
     dialog.setModal(true);
     dialog.setVisible(true);
   }
+
+
 }
