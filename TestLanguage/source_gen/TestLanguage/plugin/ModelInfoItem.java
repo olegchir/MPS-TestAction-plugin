@@ -11,16 +11,20 @@ import javax.swing.JList;
 /**
  * Class entirely dedicated to create fancy-looking toString, and put to / get from JList as a sorted list
  */
-public class ModelInfoItem implements Comparable<ModelInfoItem> {
+public class ModelInfoItem {
   private SModel model;
+
 
   public ModelInfoItem(SModel model) {
     this.model = model;
   }
 
+
+
+
   @Override
   public String toString() {
-    return model.getModelName() + " (" + model.getModule().getModuleName() + ")";
+    return model.getModelName().toString() + " (" + model.getModule().getModuleName().toString() + ")";
   }
 
   public int compare(ModelInfoItem model1, ModelInfoItem model2) {
@@ -28,12 +32,15 @@ public class ModelInfoItem implements Comparable<ModelInfoItem> {
   }
 
   public int compareTo(ModelInfoItem model) {
-    return this.getModel().getModelName().compareTo(getModel().getModelName());
+    return this.getModel().getModelName().toString().compareTo(getModel().getModelName().toString());
   }
 
   public SModel getModel() {
     return this.model;
   }
+
+
+
 
   public static ModelInfoItem[] arrayFromSModels(HashSet<SModel> models) {
     ArrayList<ModelInfoItem> imodels = new ArrayList<ModelInfoItem>();
@@ -65,4 +72,6 @@ public class ModelInfoItem implements Comparable<ModelInfoItem> {
     ModelInfoItem[] asArray = arrayFromJList(jlist);
     return modelsFromArray(asArray);
   }
+
+
 }
