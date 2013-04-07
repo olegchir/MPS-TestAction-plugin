@@ -12,6 +12,7 @@ import java.text.Collator;
 public class ModelInfoItemComparator implements Comparator<ModelInfoItem> {
   private Collator collator = Collator.getInstance();
 
+
   public int compare(ModelInfoItem item, ModelInfoItem item1) {
     String modelName = item.getModel().getModelName().toString();
     String modelName1 = item1.getModel().getModelName().toString();
@@ -22,4 +23,6 @@ public class ModelInfoItemComparator implements Comparator<ModelInfoItem> {
   private int compareString(String o1, String o2) {
     return collator.compare(o1, o2);
   }
+
+
 }
