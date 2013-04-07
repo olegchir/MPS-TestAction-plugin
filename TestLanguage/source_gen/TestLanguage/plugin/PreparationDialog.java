@@ -24,6 +24,12 @@ import com.sun.istack.internal.NotNull;
 import com.intellij.openapi.progress.ProgressIndicator;
 import jetbrains.mps.progress.ProgressMonitorAdapter;
 
+/**
+ * Helper class for displaying Preparation dialog and Class Generation progress bar
+ * Reason for the existence of Preparation dialog only in illustrating that we can
+ * show our own GUI, not only standard one, and process background tasks with our own methods.
+ * Unfortunately, it seems that usage of SwingWorker directly leads to manual checking of concurrency.\n
+ */
 public class PreparationDialog {
   public static Logger LOG = Logger.getLogger(PreparationDialog.class);
   public static final String PREPARATION_MESSAGE = "Preparing files...";
