@@ -14,10 +14,14 @@ import jetbrains.mps.smodel.MPSModuleOwner;
 import jetbrains.mps.project.IModule;
 import jetbrains.mps.internal.collections.runtime.SetSequence;
 import org.jetbrains.mps.openapi.language.SLanguage;
-import org.jetbrains.mps.openapi.model.SNode;
+import jetbrains.mps.internal.collections.runtime.ListSequence;
 import jetbrains.mps.lang.smodel.generator.smodelAdapter.SModelOperations;
-import jetbrains.mps.lang.smodel.generator.smodelAdapter.SConceptOperations;
+import jetbrains.mps.internal.collections.runtime.IWhereFilter;
+import org.jetbrains.mps.openapi.model.SNode;
 import jetbrains.mps.lang.smodel.generator.smodelAdapter.SPropertyOperations;
+import jetbrains.mps.internal.collections.runtime.IVisitor;
+import jetbrains.mps.lang.smodel.generator.smodelAdapter.SNodeOperations;
+import jetbrains.mps.lang.smodel.generator.smodelAdapter.SConceptOperations;
 import jetbrains.mps.lang.smodel.generator.smodelAdapter.SLinkOperations;
 import org.jetbrains.mps.openapi.persistence.PersistenceFacade;
 import jetbrains.mps.smodel.SModelUtil_new;
@@ -26,8 +30,8 @@ import jetbrains.mps.smodel.SReference;
 import org.jetbrains.mps.openapi.model.SNodeAccessUtil;
 
 /**
- * Main class for this generator.
- * It contains everything that is directly related to the analysis and generation of models.
+ * Main class for this generator. 
+ * It contains everything that is directly related to the analysis and generation of models. 
  */
 public class TestClassGenerator {
   public static final String LANGUAGE_FQ_NAME = "jetbrains.mps.baseLanguage";
@@ -35,12 +39,12 @@ public class TestClassGenerator {
   public static final String GENERATED_CLASS_SHORT_NAME = "TestClass";
 
   /**
-   * Main method for this plugin. 
-   * Get modules of a current project, 
-   * find all models that belongs to it and imports baseLanguage,
-   * run GUI for selecting models from this set.
-   * 
-   * @param event current action event
+   * Main method for this plugin.  
+   * Get modules of a current project,  
+   * find all models that belongs to it and imports baseLanguage, 
+   * run GUI for selecting models from this set. 
+   *  
+   * @param event current action event 
    */
   public static void execute(AnActionEvent event) {
     HashSet<SModule> modules = getCurrentProjectModules(event);
@@ -49,26 +53,22 @@ public class TestClassGenerator {
   }
 
   /**
-   * Get current project modules.
-   * (Get all modules, than check for equality of current project and every owner of every module)
-   * 
-   * @param event current event
-   * @return modules that belongs to current project
+   * Get current project modules. 
+   * (Get all modules, than check for equality of current project and every owner of every module) 
+   *  
+   * @param event current event 
+   * @return modules that belongs to current project 
    */
   public static HashSet<SModule> getCurrentProjectModules(final AnActionEvent event) {
     final HashSet<SModule> approvedModules = new HashSet<SModule>();
-
-    // Manual cocncurrency checking enabled 
-    // and it is enabled because we use GUI in a separate thread 
+    // Manual cocncurrency checking enabled  
+    // and it is enabled because we use GUI in a separate thread  
     ModelAccess.instance().runReadAction(new Runnable() {
-      @Override
       public void run() {
         MPSProject currProject = ProjectHelper.getCurrentProject(event);
-        // Alexander Eliseyev adviced to use MPSModuleRepository instead of ProjectPane - bright idea. 
+        // Alexander Eliseyev adviced to use MPSModuleRepository instead of ProjectPane - bright idea.  
         Iterable<SModule> allModules = MPSModuleRepository.getInstance().getModules();
-
         for (SModule currModule : Sequence.fromIterable(allModules)) {
-          boolean approved = false;
           for (MPSModuleOwner owner : MPSModuleRepository.getInstance().getOwners((IModule) currModule)) {
             if (owner.equals(currProject)) {
               approvedModules.add(currModule);
@@ -83,20 +83,24 @@ public class TestClassGenerator {
 
   public static HashSet<SModel> getBaseLanguageModels(final HashSet<SModule> modules) {
     final HashSet<SModel> approvedModels = new HashSet<SModel>();
-
-    // runReadAction because manual concurrency checking enabled. 
-    // and it is enabled because we use GUI in a separate thread 
+    // runReadAction because manual concurrency checking enabled.  
+    // and it is enabled because we use GUI in a separate thread  
     ModelAccess.instance().runReadAction(new Runnable() {
       public void run() {
         for (SModule currModule : SetSequence.fromSet(modules)) {
-          Iterable<SModel> ownModelDescriptors = currModule.getModels();
-          for (SModel smodel : Sequence.fromIterable(ownModelDescriptors)) {
-            Iterable<SLanguage> importedLanguages = smodel.getModelScope().getLanguages();
-            for (SLanguage lang : Sequence.fromIterable(importedLanguages)) {
-              // Check for desired language 
-              SModule langModule = lang.getModule();
-              if (langModule.getModuleName().equals(LANGUAGE_FQ_NAME) || langModule.getModuleName().startsWith(LANGUAGE_FQ_NAME_PREFIX)) {
-                approvedModels.add(smodel);
+          {
+            // Definitely will be incompatible with 3.5EAP, /TODO  
+            Iterable<SModel> ownModelDescriptors = currModule.getModels();
+            for (SModel model : Sequence.fromIterable(ownModelDescriptors)) {
+              {
+                Iterable<SLanguage> importedLanguages = model.getModelScope().getLanguages();
+                for (SLanguage lang : Sequence.fromIterable(importedLanguages)) {
+                  SModule langModule = lang.getModule();
+                  // Check for desired language  
+                  if (langModule.getModuleName().equals(LANGUAGE_FQ_NAME)) {
+                    approvedModels.add(model);
+                  }
+                }
               }
             }
           }
@@ -106,16 +110,25 @@ public class TestClassGenerator {
     return approvedModels;
   }
 
-  public static void generateTestClass(final AnActionEvent event, final SModel model) {
-    // All except runCommandInEDT will produce  
-    // IllegalModelChangeError: node registration is only allowed inside undoable command or in 'loading' model 
-    // dont't now if it is right way to do things, but what choice do I have? 
+  public static void generateTestClass(AnActionEvent event, final SModel model) {
+    // All except runCommandInEDT will produce   
+    // IllegalModelChangeError: node registration is only allowed inside undoable command or in 'loading' model  
+    // dont't now if it is right way to do things, but what choice do I have?  
     ModelAccess.instance().runCommandInEDT(new Runnable() {
       public void run() {
-        // Explicitly use conversion because it seems that MPS still does not know how to do it itself 
+        // Explicitly use conversion because it seems that MPS still does not know how to do it itself  
         SModel rootmdl = model;
 
         // From current module remove all classes which name clashes with our generated class 
+        ListSequence.fromList(SModelOperations.getRoots(rootmdl, "jetbrains.mps.baseLanguage.structure.ClassConcept")).where(new IWhereFilter<SNode>() {
+          public boolean accept(SNode it) {
+            return SPropertyOperations.getString(it, "name").equals(GENERATED_CLASS_SHORT_NAME);
+          }
+        }).visitAll(new IVisitor<SNode>() {
+          public void visit(SNode it) {
+            SNodeOperations.deleteNode(it);
+          }
+        });
 
         // Add ClassConcept root 
         SNode classNode = SModelOperations.addRootNode(rootmdl, SConceptOperations.createNewNode("jetbrains.mps.baseLanguage.structure.ClassConcept", null));
@@ -123,7 +136,7 @@ public class TestClassGenerator {
         SLinkOperations.setTarget(classNode, "visibility", SConceptOperations.createNewNode("jetbrains.mps.baseLanguage.structure.PublicVisibility", null), true);
 
         // Add "main" method 
-        SNode mainMethod = SLinkOperations.addNewChild(classNode, "staticMethod", "jetbrains.mps.baseLanguage.structure.StaticMethodDeclaration");
+        SNode mainMethod = SLinkOperations.addNewChild(classNode, "member", "jetbrains.mps.baseLanguage.structure.StaticMethodDeclaration");
         SPropertyOperations.set(mainMethod, "name", "main");
         SPropertyOperations.set(mainMethod, "isFinal", "" + (true));
         SLinkOperations.setTarget(mainMethod, "visibility", SConceptOperations.createNewNode("jetbrains.mps.baseLanguage.structure.PublicVisibility", null), true);
@@ -141,13 +154,15 @@ public class TestClassGenerator {
         // (see my question at http://forum.jetbrains.com/thread/Meta-Programming-System-813) 
         SNode mainStList = SLinkOperations.setNewChild(mainMethod, "body", "jetbrains.mps.baseLanguage.structure.StatementList");
         SNode expressionSt = SLinkOperations.addNewChild(mainStList, "statement", "jetbrains.mps.baseLanguage.structure.ExpressionStatement");
-        SNode dotExpr = _quotation_createNode_6cgqme_a0db0a0a0a0d0d();
+        SNode dotExpr = _quotation_createNode_6cgqme_a0eb0a0a0a0d0g();
         SLinkOperations.setTarget(expressionSt, "expression", dotExpr, true);
       }
     }, ProjectHelper.getCurrentProject(event));
   }
 
-  private static SNode _quotation_createNode_6cgqme_a0db0a0a0a0d0d() {
+
+
+  private static SNode _quotation_createNode_6cgqme_a0eb0a0a0a0d0g() {
     PersistenceFacade facade = PersistenceFacade.getInstance();
     SNode quotedNode_1 = null;
     SNode quotedNode_2 = null;
@@ -161,8 +176,8 @@ public class TestClassGenerator {
     quotedNode_2.addChild("actualArgument", quotedNode_4);
     quotedNode_1.addChild("operation", quotedNode_2);
     quotedNode_3 = SModelUtil_new.instantiateConceptDeclaration("jetbrains.mps.baseLanguage.structure.StaticFieldReference", null, null, GlobalScope.getInstance(), false);
-    quotedNode_3.setReference("classifier", SReference.create("classifier", quotedNode_3, facade.createModelReference("f:java_stub#6354ebe7-c22a-4a0f-ac54-50b52ab9b065#java.lang(JDK/java.lang@java_stub)"), facade.createNodeId("~System")));
     quotedNode_3.setReference("variableDeclaration", SReference.create("variableDeclaration", quotedNode_3, facade.createModelReference("f:java_stub#6354ebe7-c22a-4a0f-ac54-50b52ab9b065#java.lang(JDK/java.lang@java_stub)"), facade.createNodeId("~System.out")));
+    quotedNode_3.setReference("classifier", SReference.create("classifier", quotedNode_3, facade.createModelReference("f:java_stub#6354ebe7-c22a-4a0f-ac54-50b52ab9b065#java.lang(JDK/java.lang@java_stub)"), facade.createNodeId("~System")));
     quotedNode_1.addChild("operand", quotedNode_3);
     return quotedNode_1;
   }
