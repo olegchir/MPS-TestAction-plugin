@@ -11,7 +11,7 @@ import javax.swing.JList;
 /**
  * Class entirely dedicated to create fancy-looking toString, and put to / get from JList as a sorted list
  */
-public class ModelInfoItem {
+public class ModelInfoItem implements Comparable<ModelInfoItem> {
   private SModel model;
 
 

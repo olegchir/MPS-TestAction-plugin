@@ -4163,6 +4163,12 @@
     </node>
   </root>
   <root id="3393833955601640468">
+    <node role="implementedInterface" roleId="tpee.1095933932569" type="tpee.ClassifierType" typeId="tpee.1107535904670" id="3393833955603066937">
+      <link role="classifier" roleId="tpee.1107535924139" targetNodeId="e2lb.~Comparable" resolveInfo="Comparable" />
+      <node role="parameter" roleId="tpee.1109201940907" type="tpee.ClassifierType" typeId="tpee.1107535904670" id="3393833955603097179">
+        <link role="classifier" roleId="tpee.1107535924139" targetNodeId="3393833955601640468" resolveInfo="ModelInfoItem" />
+      </node>
+    </node>
     <node role="member" roleId="tpee.5375687026011219971" type="tpee.FieldDeclaration" typeId="tpee.1068390468200" id="3393833955601655432">
       <property name="name" nameId="tpck.1169194664001" value="model" />
       <node role="type" roleId="tpee.5680397130376446158" type="tpee.ClassifierType" typeId="tpee.1107535904670" id="3393833955601728741">
