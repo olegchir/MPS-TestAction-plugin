@@ -15,8 +15,10 @@ import org.jetbrains.mps.openapi.model.SModel;
  * Holds a lot of information in actionPerformed signature
  */
 public abstract class ModelsSelectionActionListener {
+  public abstract void actionPerformed(final AnActionEvent event, final Map<String, Object> _params, Frame mpsBaseFrame, JDialog ownerDialog, ProgressMonitorAdapter monitor, HashSet<SModel> approvedModels);
+
+
+
   public ModelsSelectionActionListener() {
   }
-
-  public abstract void actionPerformed(final AnActionEvent event, final Map<String, Object> _params, Frame mpsBaseFrame, JDialog ownerDialog, ProgressMonitorAdapter monitor, HashSet<SModel> approvedModels);
 }
